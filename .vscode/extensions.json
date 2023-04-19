@@ -1,0 +1,7 @@
+{
+  "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"],
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#08b41fcb" // change this color!
+  },
+  "vetur.ignoreProjectWarning": true
+}

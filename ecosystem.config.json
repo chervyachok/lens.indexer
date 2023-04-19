@@ -1,0 +1,17 @@
+{
+  "apps": [
+    {
+      "name": "lens_indexer_3500",
+      "script": "src/index.js",      
+      "autorestart": true,
+      "watch": false,
+      "time": true,
+      "exec_mode": "cluster",
+      "instances": 1,
+      "max_memory_restart": "1000M",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
