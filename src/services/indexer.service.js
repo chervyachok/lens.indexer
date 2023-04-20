@@ -5,15 +5,15 @@ const { Event, LastBlock, LostEvent, PeripheryEvent } = require('../models');
 const dayjs = require('dayjs')
 
 const chainId = config.chainId
-const contract = new ethers.Contract(config.bc.lensHub.address, config.bc.lensHubProfileEvents, web3.rpc);   
-const topics = Object.keys(contract.filters).filter(f=>!f.includes('(')).reduce((acc, f)=>{
-    acc = [...acc, contract.filters[f]().topics[0]]        
+const lensHub = new ethers.Contract(config.bc.lensHub.address, config.bc.lensHubProfileEvents, web3.rpc);   
+const topics = Object.keys(lensHub.filters).filter(f=>!f.includes('(')).reduce((acc, f)=>{
+    acc = [...acc, lensHub.filters[f]().topics[0]]        
     return acc
 }, [])
 
 const lensPeriphery = new ethers.Contract(config.bc.lensPeriphery.address, config.bc.lensPeripheryEvents, web3.rpc);   
-const lensPeripheryTopics = Object.keys(contract.filters).filter(f=>!f.includes('(')).reduce((acc, f)=>{
-    acc = [...acc, contract.filters[f]().topics[0]]        
+const lensPeripheryTopics = Object.keys(lensPeriphery.filters).filter(f=>!f.includes('(')).reduce((acc, f)=>{
+    acc = [...acc, lensPeriphery.filters[f]().topics[0]]        
     return acc
 }, [])
 
@@ -55,7 +55,7 @@ const profileEvents = async function(delay, step) {
                     statMsg = `done: ${percentDone}% time left: ${timeLeft}`                                     
                 } 
              
-                const rawEvents = await contract.queryFilter(topics, fromBlock, toBlock)                               	
+                const rawEvents = await lensHub.queryFilter(topics, fromBlock, toBlock)                               	
 				const events = []
                 
 				console.log(`SCAN from: ${fromBlock} to: ${toBlock} current: ${currentBlock} left: ${blocksLeft} events: ${rawEvents.length} ${statMsg}`)
@@ -78,7 +78,7 @@ const profileEvents = async function(delay, step) {
                         }
                         
                         try {                                                
-                            const data = contract.interface.decodeEventLog(rawEvent.event, rawEvent.data, rawEvent.topics);
+                            const data = lensHub.interface.decodeEventLog(rawEvent.event, rawEvent.data, rawEvent.topics);
                             Object.keys(data).filter(k => isNaN(k)).map(key => event.data[key] = data[key].toString())                               
                         } catch (error) {
                             event.rawEvent.data = rawEvent.data
@@ -233,7 +233,7 @@ const profileEventsLost = async function(delay, step) {
                     statMsg = `done: ${percentDone}% time left: ${timeLeft}`                                     
                 } 
              
-                const rawEvents = await contract.queryFilter(topics, fromBlock, toBlock)                               	
+                const rawEvents = await lensHub.queryFilter(topics, fromBlock, toBlock)                               	
 				const events = []
                 
 				console.log(`SCAN from: ${fromBlock} to: ${toBlock} current: ${currentBlock} left: ${blocksLeft} events: ${rawEvents.length} ${statMsg}`)
@@ -255,7 +255,7 @@ const profileEventsLost = async function(delay, step) {
                         }
                         
                         try {                                                
-                            const data = contract.interface.decodeEventLog(rawEvent.event, rawEvent.data, rawEvent.topics);
+                            const data = lensHub.interface.decodeEventLog(rawEvent.event, rawEvent.data, rawEvent.topics);
                             Object.keys(data).filter(k => isNaN(k)).map(key => event.data[key] = data[key].toString())                               
                         } catch (error) {
                             event.rawEvent.data = rawEvent.data
